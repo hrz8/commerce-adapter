@@ -6,8 +6,6 @@ packages:
       - name: client_abc
         runtime: 'go:1.20'
         web: 'raw'
-  - name: mokapos
-    actions:
       - name: client_def
         runtime: 'nodejs:18'
         web: 'raw'

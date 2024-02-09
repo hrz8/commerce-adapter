@@ -25,6 +25,7 @@ type DigitalOceanParameters struct {
 	Body   string `json:"__ow_body"`
 	Method string `json:"__ow_method"`
 	Query  string `json:"__ow_query"`
+	HTTP   any    `json:"http"`
 	Name   string `json:"name"`
 }
 
@@ -56,4 +57,11 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) 
 	return &Response{
 		Body: fmt.Sprintf("Hello %s!", event.Name),
 	}, nil
+}
+
+func main() {
+	Main(context.Background(), DigitalOceanParameters{
+		Name: "haii",
+		Body: "Hello",
+	})
 }
