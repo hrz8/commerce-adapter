@@ -58,10 +58,3 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) 
 		Body: fmt.Sprintf("Hello %s!", event.Name),
 	}, nil
 }
-
-func main() {
-	Main(context.Background(), DigitalOceanParameters{
-		Name: "haii",
-		Body: "Hello",
-	})
-}
