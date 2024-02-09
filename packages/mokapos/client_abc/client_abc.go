@@ -7,12 +7,12 @@ import (
 )
 
 type DigitalOceanHTTPRequest struct {
-	Body            string            `json:"body"`
 	Headers         map[string]string `json:"headers"`
-	Method          string            `json:"method"`
 	Path            string            `json:"path"`
-	IsBase64Encoded bool              `json:"isBase64Encoded"`
+	Method          string            `json:"method"`
+	Body            string            `json:"body"`
 	QueryString     string            `json:"queryString"`
+	IsBase64Encoded bool              `json:"isBase64Encoded"`
 }
 
 type DigitalOceanHTTPResponse struct {
@@ -37,6 +37,10 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*DigitalOceanHTTPR
 		fmt.Println("Error:", err)
 	}
 	fmt.Println("JSON String:", string(jsonString))
+
+	host := ctx.Value("api_host").(string)
+	name := ctx.Value("function_name").(string)
+	fmt.Println("ctx:", host, name)
 
 	return &DigitalOceanHTTPResponse{
 		Body: fmt.Sprintf("Hello %s!", "stranger"),
