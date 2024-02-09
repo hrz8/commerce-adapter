@@ -7,7 +7,7 @@ import (
 type DigitalOceanHTTPRequest struct {
 	Body            string              `json:"body"`
 	Headers         map[string][]string `json:"headers"`
-	IsBase64Encoded bool                `json:"isBase64Encoded"`
+	IsBase64Encoded bool                `json:"isBase64Encoded,omitempty"`
 	Method          string              `json:"method"`
 	Path            string              `json:"path"`
 	QueryString     string              `json:"queryString"`
@@ -20,8 +20,8 @@ type DigitalOceanHTTPResponse struct {
 }
 
 type DigitalOceanParameters struct {
-	// HTTP DigitalOceanHTTPRequest `json:"http"`
-	Name string `json:"name"`
+	HTTP DigitalOceanHTTPRequest `json:"http"`
+	Name string                  `json:"name"`
 }
 
 type Request struct {
@@ -35,11 +35,12 @@ type Response struct {
 }
 
 func Main(in DigitalOceanParameters) (*Response, error) {
+	fmt.Println(fmt.Sprintf("params: %+v\n", in))
+
 	if in.Name == "" {
 		in.Name = "stranger"
 	}
 
-	fmt.Println(fmt.Sprintf("params: %+v\n", in))
 	// fmt.Println(in.HTTP.Method)
 	// fmt.Println(in.HTTP.Path)
 
