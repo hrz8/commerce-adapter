@@ -20,8 +20,8 @@ type DigitalOceanHTTPResponse struct {
 }
 
 type DigitalOceanParameters struct {
-	HTTP DigitalOceanHTTPRequest `json:"http"`
-	Name string                  `json:"name"`
+	// HTTP DigitalOceanHTTPRequest `json:"http"`
+	Name string `json:"name"`
 }
 
 type Request struct {
