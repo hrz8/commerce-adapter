@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 type DigitalOceanHTTPRequest struct {
@@ -39,8 +40,15 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*DigitalOceanHTTPR
 	fmt.Println("JSON String:", string(jsonString))
 
 	host := ctx.Value("api_host").(string)
-	name := ctx.Value("function_name").(string)
-	fmt.Println("ctx:", host, name)
+	functionName := ctx.Value("function_name").(string)
+	namespace := ctx.Value("namespace").(string)
+
+	extractedPath := strings.TrimPrefix(functionName, namespace)
+	ctx = context.WithValue(ctx, "app_host", extractedPath)
+	appHost := ctx.Value("app_host").(string)
+	fmt.Println("ctx:", host, functionName, appHost)
+
+	fmt.Println("cookie:", event.Headers["cookie"])
 
 	return &DigitalOceanHTTPResponse{
 		Body: fmt.Sprintf("Hello %s!", "stranger"),
