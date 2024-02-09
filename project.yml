@@ -1,3 +1,5 @@
+environment:
+  LOG_DESTINATIONS: ${LOG_DESTINATIONS}
 packages:
   - name: mokapos
     actions:
