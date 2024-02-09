@@ -21,7 +21,7 @@ type DigitalOceanHTTPResponse struct {
 }
 
 type DigitalOceanParameters struct {
-	// HTTP DigitalOceanHTTPRequest `json:"http"`
+	Body string `json:"__ow_body"`
 	Name string `json:"name"`
 }
 
