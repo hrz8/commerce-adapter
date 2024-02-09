@@ -40,8 +40,8 @@ func Main(in DigitalOceanParameters) (*Response, error) {
 	}
 
 	fmt.Println(in)
-	fmt.Println(in.HTTP.Method)
-	fmt.Println(in.HTTP.Path)
+	// fmt.Println(in.HTTP.Method)
+	// fmt.Println(in.HTTP.Path)
 
 	return &Response{
 		Body: fmt.Sprintf("Hello %s!", in.Name),
