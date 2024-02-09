@@ -21,6 +21,7 @@ type DigitalOceanHTTPResponse struct {
 }
 
 func Main(ctx context.Context, req DigitalOceanHTTPRequest) (*DigitalOceanHTTPResponse, error) {
+	fmt.Println(ctx)
 	fmt.Println(req)
 	return &DigitalOceanHTTPResponse{
 		Body: fmt.Sprintf("Hello %s!", req.QueryString),
