@@ -21,8 +21,9 @@ type DigitalOceanHTTPResponse struct {
 }
 
 type DigitalOceanParameters struct {
-	Body string `json:"__ow_body"`
-	Name string `json:"name"`
+	Body   string `json:"__ow_body"`
+	Method string `json:"__ow_method"`
+	Name   string `json:"name"`
 }
 
 type Request struct {
