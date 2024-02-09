@@ -10,6 +10,7 @@ packages:
     actions:
       - name: client_def
         runtime: 'nodejs:18'
+        web: 'raw'
   - name: shopify
     actions:
       - name: client_ghi
