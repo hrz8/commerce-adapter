@@ -7,11 +7,12 @@ import (
 )
 
 type DigitalOceanHTTPRequest struct {
-	Body        string            `json:"body"`
-	Headers     map[string]string `json:"headers"`
-	Method      string            `json:"method"`
-	Path        string            `json:"path"`
-	QueryString string            `json:"queryString"`
+	Body            string            `json:"body"`
+	Headers         map[string]string `json:"headers"`
+	Method          string            `json:"method"`
+	Path            string            `json:"path"`
+	IsBase64Encoded bool              `json:"isBase64Encoded"`
+	QueryString     string            `json:"queryString"`
 }
 
 type DigitalOceanHTTPResponse struct {
