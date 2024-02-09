@@ -1,7 +1,7 @@
-function main(ctx, args) {
+function main(params, ctx) {
+    console.log(JSON.stringify(params))
+    console.log("============")
     console.log(JSON.stringify(ctx))
-    console.log("==========")
-    console.log(JSON.stringify(args))
     let name = args.name || 'stranger'
     let greeting = 'Hello Two ' + name + '!'
     console.log(greeting)

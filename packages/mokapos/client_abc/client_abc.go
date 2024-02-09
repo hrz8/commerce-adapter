@@ -39,7 +39,7 @@ func Main(in DigitalOceanParameters) (*Response, error) {
 		in.Name = "stranger"
 	}
 
-	fmt.Println(in)
+	fmt.Println(fmt.Sprintf("params: %+v\n", in))
 	// fmt.Println(in.HTTP.Method)
 	// fmt.Println(in.HTTP.Path)
 
