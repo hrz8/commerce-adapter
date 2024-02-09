@@ -39,6 +39,7 @@ type Response struct {
 }
 
 func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) {
+	fmt.Println(fmt.Sprintf("params: %+v\n", event))
 	jsonString, err := json.Marshal(event)
 	if err != nil {
 		fmt.Println("Error:", err)
