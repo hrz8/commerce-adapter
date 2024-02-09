@@ -21,24 +21,14 @@ type DigitalOceanHTTPResponse struct {
 }
 
 type DigitalOceanParameters struct {
-	Body   string                  `json:"__ow_body"`
-	Method string                  `json:"__ow_method"`
-	Query  string                  `json:"__ow_query"`
-	HTTP   DigitalOceanHTTPRequest `json:"http"`
-	Name   string                  `json:"name"`
+	Headers string                  `json:"__ow_headers"`
+	Method  string                  `json:"__ow_method"`
+	Body    string                  `json:"__ow_body"`
+	Query   string                  `json:"__ow_query"`
+	HTTP    DigitalOceanHTTPRequest `json:"http"`
 }
 
-type Request struct {
-	Name string `json:"name"`
-}
-
-type Response struct {
-	StatusCode int               `json:"statusCode,omitempty"`
-	Headers    map[string]string `json:"headers,omitempty"`
-	Body       string            `json:"body,omitempty"`
-}
-
-func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) {
+func Main(ctx context.Context, event DigitalOceanParameters) (*DigitalOceanHTTPResponse, error) {
 	fmt.Println(fmt.Sprintf("params: %+v\n", event))
 	jsonString, err := json.Marshal(event)
 	if err != nil {
@@ -46,14 +36,7 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) 
 	}
 	fmt.Println("JSON String:", string(jsonString))
 
-	if event.Name == "" {
-		event.Name = "stranger"
-	}
-
-	// fmt.Println(in.HTTP.Method)
-	// fmt.Println(in.HTTP.Path)
-
-	return &Response{
-		Body: fmt.Sprintf("Hello %s!", event.Name),
+	return &DigitalOceanHTTPResponse{
+		Body: fmt.Sprintf("Hello %s!", "stranger"),
 	}, nil
 }
