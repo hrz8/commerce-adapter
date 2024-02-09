@@ -1,33 +1,27 @@
 package main
 
 import (
-	"context"
 	"fmt"
 )
 
-type DigitalOceanHTTPRequest struct {
-	Body            string              `json:"body"`
-	Headers         map[string][]string `json:"headers"`
-	IsBase64Encoded bool                `json:"isBase64Encoded"`
-	Method          string              `json:"method"`
-	Path            string              `json:"path"`
-	QueryString     string              `json:"queryString"`
+type Request struct {
+	Name string `json:"name"`
 }
 
-type DigitalOceanHTTPResponse struct {
+type Response struct {
 	StatusCode int               `json:"statusCode,omitempty"`
 	Headers    map[string]string `json:"headers,omitempty"`
 	Body       string            `json:"body,omitempty"`
 }
 
-type DigitalOceanParameters struct {
-	HTTP DigitalOceanHTTPRequest `json:"http"`
-}
+func Main(in Request) (*Response, error) {
+	if in.Name == "" {
+		in.Name = "stranger"
+	}
 
-func Main(ctx context.Context, params DigitalOceanParameters) (*DigitalOceanHTTPResponse, error) {
-	fmt.Println(ctx)
-	fmt.Println(params)
-	return &DigitalOceanHTTPResponse{
-		Body: fmt.Sprintf("Hello %s!", params.HTTP.QueryString),
+	fmt.Println(in)
+
+	return &Response{
+		Body: fmt.Sprintf("Hello %s!", in.Name),
 	}, nil
 }
