@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 )
 
@@ -23,6 +24,7 @@ type DigitalOceanHTTPResponse struct {
 type DigitalOceanParameters struct {
 	Body   string `json:"__ow_body"`
 	Method string `json:"__ow_method"`
+	Query  string `json:"__ow_query"`
 	Name   string `json:"name"`
 }
 
@@ -37,7 +39,11 @@ type Response struct {
 }
 
 func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) {
-	fmt.Println(fmt.Sprintf("params: %+v\n", event))
+	jsonString, err := json.Marshal(event)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	fmt.Println(fmt.Sprintf("params: %s", jsonString))
 
 	if event.Name == "" {
 		event.Name = "stranger"
