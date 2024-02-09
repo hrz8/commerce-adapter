@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -34,17 +35,17 @@ type Response struct {
 	Body       string            `json:"body,omitempty"`
 }
 
-func Main(in DigitalOceanParameters) (*Response, error) {
-	fmt.Println(fmt.Sprintf("params: %+v\n", in))
+func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) {
+	fmt.Println(fmt.Sprintf("params: %+v\n", event))
 
-	if in.Name == "" {
-		in.Name = "stranger"
+	if event.Name == "" {
+		event.Name = "stranger"
 	}
 
 	// fmt.Println(in.HTTP.Method)
 	// fmt.Println(in.HTTP.Path)
 
 	return &Response{
-		Body: fmt.Sprintf("Hello %s!", in.Name),
+		Body: fmt.Sprintf("Hello %s!", event.Name),
 	}, nil
 }
