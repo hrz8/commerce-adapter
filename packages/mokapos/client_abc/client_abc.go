@@ -23,6 +23,7 @@ type DigitalOceanHTTPResponse struct {
 
 type DigitalOceanParameters struct {
 	Headers map[string]string       `json:"__ow_headers"`
+	Path    string                  `json:"__ow_path"`
 	Method  string                  `json:"__ow_method"`
 	Body    string                  `json:"__ow_body"`
 	Query   string                  `json:"__ow_query"`
