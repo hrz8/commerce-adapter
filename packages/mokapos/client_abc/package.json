@@ -2,7 +2,7 @@
   "name": "hello",
   "version": "1.0.0",
   "description": "Hello world: NodeJs",
-  "main": "hello.js",
+  "main": "client_abc.js",
   "scripts": {
     "test": "jest --coverage --runInBand --forceExit --verbose false"
   },

@@ -1,5 +1,13 @@
 packages:
-  - name: sample
+  - name: mokapos
     actions:
-      - name: hello
-        runtime: 'nodejs:default'
+      - name: client_abc
+        runtime: 'nodejs:18'
+  - name: mokapos
+    actions:
+      - name: client_def
+        runtime: 'nodejs:18'
+  - name: shopify
+    actions:
+      - name: client_ghi
+        runtime: 'nodejs:18'
