@@ -43,7 +43,7 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*Response, error) 
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
-	fmt.Println(fmt.Sprintf("params: %s", string(jsonString)))
+	fmt.Println("JSON String:", string(jsonString))
 
 	if event.Name == "" {
 		event.Name = "stranger"
