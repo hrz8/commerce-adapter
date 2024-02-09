@@ -20,10 +20,14 @@ type DigitalOceanHTTPResponse struct {
 	Body       string            `json:"body,omitempty"`
 }
 
-func Main(ctx context.Context, req DigitalOceanHTTPRequest) (*DigitalOceanHTTPResponse, error) {
+type DigitalOceanParameters struct {
+	HTTP DigitalOceanHTTPRequest `json:"http"`
+}
+
+func Main(ctx context.Context, params DigitalOceanParameters) (*DigitalOceanHTTPResponse, error) {
 	fmt.Println(ctx)
-	fmt.Println(req)
+	fmt.Println(params)
 	return &DigitalOceanHTTPResponse{
-		Body: fmt.Sprintf("Hello %s!", req.QueryString),
+		Body: fmt.Sprintf("Hello %s!", params.HTTP.QueryString),
 	}, nil
 }
