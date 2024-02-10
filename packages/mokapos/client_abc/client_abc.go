@@ -17,7 +17,7 @@ const (
 	BASE_URL           = "https://altalune.id/" + FUNCTION_NAMESPACE
 )
 
-var app *echo.Echo
+var app *fiber.App
 var adapter Adapter
 
 type Adapter interface {
@@ -87,8 +87,8 @@ func echoAdapter(app *echo.Echo) Adapter {
 
 func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
 	ctx = initCtx(ctx)
-	app = echoApp(ctx)
-	adapter = echoAdapter(app)
+	app = fiberApp(ctx)
+	adapter = fiberAdapter(app)
 
 	return adapter.ProxyWithContext(ctx, event)
 }
