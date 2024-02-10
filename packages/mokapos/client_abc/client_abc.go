@@ -37,11 +37,11 @@ func fiberApp() *fiber.App {
 	app := fiber.New()
 	baseFunction := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAMESPACE, FUNCTION_PACKAGE, FUNCTION_NAME))
 
-	baseFunction.Get("/commerce/mokapos/client_abc", func(c *fiber.Ctx) error {
+	baseFunction.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
 	})
 
-	baseFunction.Get("/commerce/mokapos/client_abc/uhuy", func(c *fiber.Ctx) error {
+	baseFunction.Get("/uhuy", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Huy!")
 	})
 
