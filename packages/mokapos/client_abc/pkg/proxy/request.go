@@ -84,6 +84,8 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 		path += "?" + req.QueryString
 	}
 
+	fmt.Println("path:", path)
+
 	httpRequest, err := http.NewRequest(
 		strings.ToUpper(req.Method),
 		path,

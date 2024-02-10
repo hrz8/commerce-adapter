@@ -4,6 +4,7 @@ import (
 	"aiconec/commerce-adapter/core"
 	"aiconec/commerce-adapter/pkg/proxy"
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,11 +18,14 @@ var app *fiber.App
 var fiberDoFunc *proxy.FiberProxy
 
 func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
+	fmt.Println(fmt.Sprintf("params: %+v\n", event))
 	functionName := ctx.Value("function_name").(string)
 	namespace := ctx.Value("namespace").(string)
 
 	extractedPath := strings.TrimPrefix(functionName, "/"+namespace)
 	ctx = context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
+
+	fmt.Println("ctx:", functionName, namespace, BASE_URL+extractedPath)
 
 	app = fiber.New()
 
