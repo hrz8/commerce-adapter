@@ -1,12 +1,13 @@
 package main
 
 import (
-	"aiconec/commerce-adapter/core"
-	echoadapter "aiconec/commerce-adapter/pkg/adapter/echo"
-	fiberadapter "aiconec/commerce-adapter/pkg/adapter/fiber"
 	"context"
 	"fmt"
 	"strings"
+
+	"github.com/hrz8/do-function-go-proxy/core"
+	echoadapter "github.com/hrz8/do-function-go-proxy/pkg/adapter/echo"
+	fiberadapter "github.com/hrz8/do-function-go-proxy/pkg/adapter/fiber"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/labstack/echo/v4"
