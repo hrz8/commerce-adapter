@@ -10,12 +10,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 const (
 	FUNCTION_NAMESPACE = "commerce"
-	FUNCTION_PACKAGE   = "mokapos"
-	FUNCTION_NAME      = "client_abc"
 	BASE_URL           = "https://altalune.id/" + FUNCTION_NAMESPACE
 )
 
@@ -26,18 +25,25 @@ type Adapter interface {
 	ProxyWithContext(ctx context.Context, params core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error)
 }
 
-func DoCtx(ctx context.Context) context.Context {
+func initCtx(ctx context.Context) context.Context {
+	// /ap-xxx-xxx/mokapos/client_abc
 	functionName := ctx.Value("function_name").(string)
+	// ap-xxx-xxx
 	namespace := ctx.Value("namespace").(string)
-
+	// /mokapos/client_abc
 	extractedPath := strings.TrimPrefix(functionName, "/"+namespace)
 
-	return context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
+	ctx = context.WithValue(ctx, "trailing_path", extractedPath)
+	ctx = context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
+
+	return ctx
 }
 
-func fiberApp() *fiber.App {
+func fiberApp(ctx context.Context) *fiber.App {
+	path := ctx.Value("trailing_path").(string)
+
 	app := fiber.New()
-	router := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAMESPACE, FUNCTION_PACKAGE, FUNCTION_NAME))
+	router := app.Group(fmt.Sprintf("/%s/%s", FUNCTION_NAMESPACE, path))
 
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
@@ -54,9 +60,13 @@ func fiberAdapter(app *fiber.App) Adapter {
 	return fiberadapter.New(app)
 }
 
-func echoApp() *echo.Echo {
+func echoApp(ctx context.Context) *echo.Echo {
+	path := ctx.Value("trailing_path").(string)
+
 	e := echo.New()
-	router := e.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAMESPACE, FUNCTION_PACKAGE, FUNCTION_NAME))
+	e.Pre(middleware.AddTrailingSlash())
+
+	router := e.Group(fmt.Sprintf("/%s/%s", FUNCTION_NAMESPACE, path))
 
 	router.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World Echo!")
@@ -74,8 +84,9 @@ func echoAdapter(app *echo.Echo) Adapter {
 }
 
 func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
-	app = echoApp()
+	ctx = initCtx(ctx)
+	app = echoApp(ctx)
 	adapter = echoAdapter(app)
 
-	return adapter.ProxyWithContext(DoCtx(ctx), event)
+	return adapter.ProxyWithContext(ctx, event)
 }
