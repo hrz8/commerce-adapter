@@ -64,7 +64,7 @@ func echoApp(ctx context.Context) *echo.Echo {
 	path := ctx.Value("trailing_path").(string)
 
 	e := echo.New()
-	e.Pre(middleware.AddTrailingSlash())
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	router := e.Group(fmt.Sprintf("/%s%s", FUNCTION_NAMESPACE, path))
 
@@ -73,6 +73,10 @@ func echoApp(ctx context.Context) *echo.Echo {
 	})
 
 	router.GET("/uhuy", func(c echo.Context) error {
+		return c.String(200, "Hello, World Echuy!")
+	})
+
+	router.GET("/owo/iwi", func(c echo.Context) error {
 		return c.String(200, "Hello, World Echuy!")
 	})
 
