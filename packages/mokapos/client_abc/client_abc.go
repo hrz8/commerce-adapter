@@ -10,7 +10,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 const (
@@ -64,7 +63,6 @@ func echoApp(ctx context.Context) *echo.Echo {
 	path := ctx.Value("trailing_path").(string)
 
 	e := echo.New()
-	e.Pre(middleware.RemoveTrailingSlash())
 
 	router := e.Group(fmt.Sprintf("/%s%s", FUNCTION_NAMESPACE, path))
 

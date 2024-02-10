@@ -50,14 +50,16 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 		}
 	}
 
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
 	serverAddress := ctx.Value("app_host").(string)
 	path = serverAddress + path
 
 	if len(req.QueryString) > 0 {
 		path += "?" + req.QueryString
 	}
-
-	fmt.Println("path:", path)
 
 	httpRequest, err := http.NewRequest(
 		strings.ToUpper(req.Method),
