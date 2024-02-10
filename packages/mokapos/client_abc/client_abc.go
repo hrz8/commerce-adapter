@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	BASE_URL = "altalune.id/commerce"
+	BASE_URL = "https://altalune.id/commerce"
 )
 
 var app *fiber.App
@@ -26,6 +26,7 @@ func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.Digital
 	ctx = context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
 
 	fmt.Println("ctx:", functionName, namespace, BASE_URL+extractedPath)
+	fmt.Println("path main:", event.HTTP.Path)
 
 	app = fiber.New()
 
