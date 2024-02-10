@@ -67,6 +67,8 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 	}
 
 	path := req.Path
+	fmt.Println(fmt.Sprintf("r.stripBasePath \"%s\"", r.stripBasePath))
+	fmt.Println(fmt.Sprintf("path 1 \"%s\"", path))
 
 	if r.stripBasePath != "" && len(r.stripBasePath) > 1 {
 		if strings.HasPrefix(path, r.stripBasePath) {
@@ -84,7 +86,7 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 		path += "?" + req.QueryString
 	}
 
-	fmt.Println("path:", path)
+	fmt.Println(fmt.Sprintf("path 2 \"%s\"", path))
 
 	httpRequest, err := http.NewRequest(
 		strings.ToUpper(req.Method),
