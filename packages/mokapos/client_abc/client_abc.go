@@ -43,7 +43,7 @@ func fiberApp(ctx context.Context) *fiber.App {
 	path := ctx.Value("trailing_path").(string)
 
 	app := fiber.New()
-	router := app.Group(fmt.Sprintf("/%s/%s", FUNCTION_NAMESPACE, path))
+	router := app.Group(fmt.Sprintf("/%s%s", FUNCTION_NAMESPACE, path))
 
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
@@ -66,7 +66,7 @@ func echoApp(ctx context.Context) *echo.Echo {
 	e := echo.New()
 	e.Pre(middleware.AddTrailingSlash())
 
-	router := e.Group(fmt.Sprintf("/%s/%s", FUNCTION_NAMESPACE, path))
+	router := e.Group(fmt.Sprintf("/%s%s", FUNCTION_NAMESPACE, path))
 
 	router.GET("/", func(c echo.Context) error {
 		return c.String(200, "Hello, World Echo!")
