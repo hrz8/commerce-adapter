@@ -4,7 +4,6 @@ import (
 	"aiconec/commerce-adapter/core"
 	fiberadapter "aiconec/commerce-adapter/pkg/adapter/fiber"
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -35,13 +34,13 @@ func DoCtx(ctx context.Context) context.Context {
 
 func fiberApp() *fiber.App {
 	app := fiber.New()
-	// router := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME))
+	// baseFunction := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME))
 
-	app.Get(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME), func(c *fiber.Ctx) error {
+	app.Get("/commerce/mokapos/client_abc", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
 	})
 
-	app.Get(fmt.Sprintf("/%s/%s/%s/uhuy", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME), func(c *fiber.Ctx) error {
+	app.Get("/commerce/mokapos/client_abc/uhuy", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Huy!")
 	})
 
