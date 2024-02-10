@@ -26,7 +26,7 @@ func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.Digital
 	ctx = context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
 
 	fmt.Println("ctx:", functionName, namespace, BASE_URL+extractedPath)
-	fmt.Println(fmt.Sprintf("path 0 \"%s\"", event.HTTP.Path))
+	fmt.Println(fmt.Sprintf("path 0 '%s'", event.HTTP.Path))
 
 	app = fiber.New()
 
