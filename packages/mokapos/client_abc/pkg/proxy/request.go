@@ -49,6 +49,8 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 			path = strings.Replace(path, r.stripBasePath, "", 1)
 		}
 	}
+
+	fmt.Println("path:", path)
 	if !strings.HasPrefix(path, "/") && path != "" {
 		path = "/" + path
 	}
