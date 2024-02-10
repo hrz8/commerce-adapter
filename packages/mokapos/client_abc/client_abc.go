@@ -30,7 +30,7 @@ func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.Digital
 
 	app = fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/commerce/mokapos/client_abc", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
 	})
 
