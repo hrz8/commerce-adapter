@@ -1,17 +1,14 @@
 package proxy
 
 import (
-	docore "aiconec/commerce-adapter/core/do"
+	"aiconec/commerce-adapter/core"
 	"bytes"
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"net/textproto"
-	"net/url"
-	"os"
 	"strings"
 )
 
@@ -45,33 +42,21 @@ func (r *RequestAccessor) StripBasePath(basePath string) string {
 	return newBasePath
 }
 
-// ProxyEventToHTTPRequest converts an API Gateway proxy event into a http.Request object.
-// Returns the populated http request with additional two custom headers for the stage variables and API Gateway context.
-// To access these properties use the GetAPIGatewayStageVars and GetAPIGatewayContext method of the RequestAccessor object.
-func (r *RequestAccessor) ProxyEventToHTTPRequest(req docore.DigitalOceanHTTPRequest) (*http.Request, error) {
-	httpRequest, err := r.EventToRequest(req)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return addToHeaderV2(httpRequest, req)
-}
-
 // EventToRequestWithContext converts an API Gateway proxy event and context into an http.Request object.
 // Returns the populated http request with lambda context, stage variables and APIGatewayProxyRequestContext as part of its context.
 // Access those using GetAPIGatewayContextFromContext, GetStageVarsFromContext and GetRuntimeContextFromContext functions in this package.
-func (r *RequestAccessor) EventToRequestWithContext(ctx context.Context, req docore.DigitalOceanHTTPRequest) (*http.Request, error) {
-	httpRequest, err := r.EventToRequest(req)
+func (r *RequestAccessor) EventToRequestWithContext(ctx context.Context, req core.DigitalOceanHTTPRequest) (*http.Request, error) {
+	httpRequest, err := r.EventToRequest(ctx, req)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	return addToContextV2(ctx, httpRequest, req), nil
+	return httpRequest, nil
 }
 
 // EventToRequest converts an API Gateway proxy event into an http.Request object.
 // Returns the populated request maintaining headers
-func (r *RequestAccessor) EventToRequest(req docore.DigitalOceanHTTPRequest) (*http.Request, error) {
+func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOceanHTTPRequest) (*http.Request, error) {
 	decodedBody := []byte(req.Body)
 	if req.IsBase64Encoded {
 		base64Body, err := base64.StdEncoding.DecodeString(req.Body)
@@ -91,20 +76,12 @@ func (r *RequestAccessor) EventToRequest(req docore.DigitalOceanHTTPRequest) (*h
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
-	serverAddress := "https://" + req.RequestContext.DomainName
-	if customAddress, ok := os.LookupEnv(CustomHostVariable); ok {
-		serverAddress = customAddress
-	}
+
+	serverAddress := ctx.Value("app_host").(string)
 	path = serverAddress + path
 
-	if len(req.RawQueryString) > 0 {
-		path += "?" + req.RawQueryString
-	} else if len(req.QueryStringParameters) > 0 {
-		values := url.Values{}
-		for key, value := range req.QueryStringParameters {
-			values.Add(key, value)
-		}
-		path += "?" + values.Encode()
+	if len(req.QueryString) > 0 {
+		path += "?" + req.QueryString
 	}
 
 	httpRequest, err := http.NewRequest(
@@ -114,15 +91,15 @@ func (r *RequestAccessor) EventToRequest(req docore.DigitalOceanHTTPRequest) (*h
 	)
 
 	if err != nil {
-		fmt.Printf("Could not convert request %s:%s to http.Request\n", req.RequestContext.HTTP.Method, req.RequestContext.HTTP.Path)
+		fmt.Printf("Could not convert request %s:%s to http.Request\n", req.Method, req.Path)
 		log.Println(err)
 		return nil, err
 	}
 
-	httpRequest.RemoteAddr = req.RequestContext.HTTP.SourceIP
+	httpRequest.RemoteAddr = req.Headers["do-connecting-ip"]
 
-	for _, cookie := range req.Cookies {
-		httpRequest.Header.Add("Cookie", cookie)
+	if req.Headers["cookie"] != "" {
+		httpRequest.Header.Add("Cookie", req.Headers["cookie"])
 	}
 
 	singletonHeaders, headers := splitSingletonHeaders(req.Headers)
@@ -140,41 +117,6 @@ func (r *RequestAccessor) EventToRequest(req docore.DigitalOceanHTTPRequest) (*h
 	httpRequest.RequestURI = httpRequest.URL.RequestURI()
 
 	return httpRequest, nil
-}
-
-func addToHeaderV2(req *http.Request, apiGwRequest events.APIGatewayV2HTTPRequest) (*http.Request, error) {
-	stageVars, err := json.Marshal(apiGwRequest.StageVariables)
-	if err != nil {
-		log.Println("Could not marshal stage variables for custom header")
-		return nil, err
-	}
-	req.Header.Add(APIGwStageVarsHeader, string(stageVars))
-	apiGwContext, err := json.Marshal(apiGwRequest.RequestContext)
-	if err != nil {
-		log.Println("Could not Marshal API GW context for custom header")
-		return req, err
-	}
-	req.Header.Add(APIGwContextHeader, string(apiGwContext))
-	return req, nil
-}
-
-func addToContextV2(ctx context.Context, req *http.Request, apiGwRequest events.APIGatewayV2HTTPRequest) *http.Request {
-	lc, _ := lambdacontext.FromContext(ctx)
-	rc := requestContextV2{lambdaContext: lc, gatewayProxyContext: apiGwRequest.RequestContext, stageVars: apiGwRequest.StageVariables}
-	ctx = context.WithValue(ctx, ctxKey{}, rc)
-	return req.WithContext(ctx)
-}
-
-// GetAPIGatewayV2ContextFromContext retrieve APIGatewayProxyRequestContext from context.Context
-func GetAPIGatewayV2ContextFromContext(ctx context.Context) (events.APIGatewayV2HTTPRequestContext, bool) {
-	v, ok := ctx.Value(ctxKey{}).(requestContextV2)
-	return v.gatewayProxyContext, ok
-}
-
-// GetRuntimeContextFromContextV2 retrieve Lambda Runtime Context from context.Context
-func GetRuntimeContextFromContextV2(ctx context.Context) (*lambdacontext.LambdaContext, bool) {
-	v, ok := ctx.Value(ctxKey{}).(requestContextV2)
-	return v.lambdaContext, ok
 }
 
 // GetStageVarsFromContextV2 retrieve stage variables from context

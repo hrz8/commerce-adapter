@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	docore "aiconec/commerce-adapter/core/do"
+	"aiconec/commerce-adapter/core"
 	"bytes"
 	"encoding/base64"
 	"errors"
@@ -79,11 +79,11 @@ func (r *ProxyResponseWriter) WriteHeader(status int) {
 // an docore.DigitalOceanHTTPResponse object.
 // Returns a populated proxy response object. If the response is invalid, for example
 // has no headers or an invalid status code returns an error.
-func (r *ProxyResponseWriter) GetProxyResponse() (docore.DigitalOceanHTTPResponse, error) {
+func (r *ProxyResponseWriter) GetProxyResponse() (core.DigitalOceanHTTPResponse, error) {
 	r.notifyClosed()
 
 	if r.status == defaultStatusCode {
-		return docore.DigitalOceanHTTPResponse{}, errors.New("Status code not set on response")
+		return core.DigitalOceanHTTPResponse{}, errors.New("Status code not set on response")
 	}
 
 	var output string
@@ -107,7 +107,7 @@ func (r *ProxyResponseWriter) GetProxyResponse() (docore.DigitalOceanHTTPRespons
 		headers[headerKey] = strings.Join(headerValue, ",")
 	}
 
-	return docore.DigitalOceanHTTPResponse{
+	return core.DigitalOceanHTTPResponse{
 		StatusCode: r.status,
 		Headers:    headers,
 		Body:       output,
