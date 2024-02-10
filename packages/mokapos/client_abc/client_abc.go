@@ -2,12 +2,14 @@ package main
 
 import (
 	"aiconec/commerce-adapter/core"
+	echoadapter "aiconec/commerce-adapter/pkg/adapter/echo"
 	fiberadapter "aiconec/commerce-adapter/pkg/adapter/fiber"
 	"context"
 	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
 const (
@@ -17,7 +19,7 @@ const (
 	BASE_URL           = "https://altalune.id/" + FUNCTION_NAMESPACE
 )
 
-var app *fiber.App
+var app *echo.Echo
 var adapter Adapter
 
 type Adapter interface {
@@ -35,13 +37,13 @@ func DoCtx(ctx context.Context) context.Context {
 
 func fiberApp() *fiber.App {
 	app := fiber.New()
-	baseFunction := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAMESPACE, FUNCTION_PACKAGE, FUNCTION_NAME))
+	router := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAMESPACE, FUNCTION_PACKAGE, FUNCTION_NAME))
 
-	baseFunction.Get("/", func(c *fiber.Ctx) error {
+	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
 	})
 
-	baseFunction.Get("/uhuy", func(c *fiber.Ctx) error {
+	router.Get("/uhuy", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Huy!")
 	})
 
@@ -52,9 +54,28 @@ func fiberAdapter(app *fiber.App) Adapter {
 	return fiberadapter.New(app)
 }
 
+func echoApp() *echo.Echo {
+	e := echo.New()
+	router := e.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAMESPACE, FUNCTION_PACKAGE, FUNCTION_NAME))
+
+	router.GET("/", func(c echo.Context) error {
+		return c.String(200, "Hello, World Echo!")
+	})
+
+	router.GET("/uhuy", func(c echo.Context) error {
+		return c.String(200, "Hello, World Echuy!")
+	})
+
+	return e
+}
+
+func echoAdapter(app *echo.Echo) Adapter {
+	return echoadapter.New(app)
+}
+
 func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
-	app = fiberApp()
-	adapter = fiberAdapter(app)
+	app = echoApp()
+	adapter = echoAdapter(app)
 
 	return adapter.ProxyWithContext(DoCtx(ctx), event)
 }
