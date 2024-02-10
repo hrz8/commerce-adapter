@@ -35,13 +35,13 @@ func DoCtx(ctx context.Context) context.Context {
 
 func fiberApp() *fiber.App {
 	app := fiber.New()
-	router := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME))
+	// router := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME))
 
-	router.Get("/", func(c *fiber.Ctx) error {
+	app.Get(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME), func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
 	})
 
-	router.Get("/uhuy", func(c *fiber.Ctx) error {
+	app.Get(fmt.Sprintf("/%s/%s/%s/uhuy", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME), func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Huy!")
 	})
 
