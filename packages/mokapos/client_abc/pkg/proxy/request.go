@@ -49,9 +49,9 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 			path = strings.Replace(path, r.stripBasePath, "", 1)
 		}
 	}
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
+	// if !strings.HasPrefix(path, "/") {
+	// 	path = "/" + path
+	// }
 
 	serverAddress := ctx.Value("app_host").(string)
 	path = serverAddress + path
