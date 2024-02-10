@@ -1,7 +1,8 @@
-package proxy
+package fiberadapter
 
 import (
 	"aiconec/commerce-adapter/core"
+	"aiconec/commerce-adapter/pkg/proxy"
 	"context"
 	"fmt"
 	"io"
@@ -15,38 +16,36 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-// FiberProxy makes it easy to send API Gateway proxy events to a fiber.App.
+// FiberAdapter makes it easy to send API Gateway proxy events to a fiber.App.
 // The library transforms the proxy event into an HTTP request and then
 // creates a proxy response object from the *fiber.Ctx
-type FiberProxy struct {
-	RequestAccessor
+type FiberAdapter struct {
+	proxy.RequestAccessor
+
 	app *fiber.App
 }
 
-// New creates a new instance of the FiberLambda object.
+// New creates a new instance of the FiberAdapter object.
 // Receives an initialized *fiber.App object - normally created with fiber.New().
-// It returns the initialized instance of the FiberLambda object.
-func New(app *fiber.App) *FiberProxy {
-	return &FiberProxy{
-		app: app,
-	}
+// It returns the initialized instance of the FiberAdapter object.
+func New(app *fiber.App) *FiberAdapter {
+	return &FiberAdapter{app: app}
 }
 
 // ProxyWithContext receives context and an API Gateway proxy event,
 // transforms them into an http.Request object, and sends it to the echo.Echo for routing.
 // It returns a proxy response object generated from the http.ResponseWriter.
-func (f *FiberProxy) ProxyWithContext(ctx context.Context, params core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
-	fiberRequest, err := f.EventToRequestWithContext(ctx, params.HTTP)
-	return f.proxyInternal(fiberRequest, err)
+func (f *FiberAdapter) ProxyWithContext(ctx context.Context, params core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
+	httpRequest, err := f.EventToRequestWithContext(ctx, params.HTTP)
+	return f.proxyInternal(httpRequest, err)
 }
 
-func (f *FiberProxy) proxyInternal(req *http.Request, err error) (*core.DigitalOceanHTTPResponse, error) {
-
+func (f *FiberAdapter) proxyInternal(req *http.Request, err error) (*core.DigitalOceanHTTPResponse, error) {
 	if err != nil {
 		return core.GatewayTimeout(), core.NewLoggedError("Could not convert proxy event to request: %v", err)
 	}
 
-	resp := NewProxyResponseWriter()
+	resp := proxy.NewProxyResponseWriter()
 	f.adaptor(resp, req)
 
 	proxyResponse, err := resp.GetProxyResponse()
@@ -57,7 +56,7 @@ func (f *FiberProxy) proxyInternal(req *http.Request, err error) (*core.DigitalO
 	return &proxyResponse, nil
 }
 
-func (f *FiberProxy) adaptor(w http.ResponseWriter, r *http.Request) {
+func (f *FiberAdapter) adaptor(w http.ResponseWriter, r *http.Request) {
 	// New fasthttp request
 	req := fasthttp.AcquireRequest()
 	defer fasthttp.ReleaseRequest(req)

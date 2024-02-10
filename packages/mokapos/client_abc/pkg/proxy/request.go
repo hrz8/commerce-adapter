@@ -18,30 +18,6 @@ type RequestAccessor struct {
 	stripBasePath string
 }
 
-// StripBasePath instructs the RequestAccessor object that the given base
-// path should be removed from the request path before sending it to the
-// framework for routing. This is used when API Gateway is configured with
-// base path mappings in custom domain names.
-func (r *RequestAccessor) StripBasePath(basePath string) string {
-	if strings.Trim(basePath, " ") == "" {
-		r.stripBasePath = ""
-		return ""
-	}
-
-	newBasePath := basePath
-	if !strings.HasPrefix(newBasePath, "/") {
-		newBasePath = "/" + newBasePath
-	}
-
-	if strings.HasSuffix(newBasePath, "/") {
-		newBasePath = newBasePath[:len(newBasePath)-1]
-	}
-
-	r.stripBasePath = newBasePath
-
-	return newBasePath
-}
-
 // EventToRequestWithContext converts an API Gateway proxy event and context into an http.Request object.
 // Returns the populated http request with lambda context, stage variables and APIGatewayProxyRequestContext as part of its context.
 // Access those using GetAPIGatewayContextFromContext, GetStageVarsFromContext and GetRuntimeContextFromContext functions in this package.
@@ -67,17 +43,15 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 	}
 
 	path := req.Path
-	fmt.Println(fmt.Sprintf("r.stripBasePath '%s'", r.stripBasePath))
-	fmt.Println(fmt.Sprintf("path 1 '%s'", path))
 
 	if r.stripBasePath != "" && len(r.stripBasePath) > 1 {
 		if strings.HasPrefix(path, r.stripBasePath) {
 			path = strings.Replace(path, r.stripBasePath, "", 1)
 		}
 	}
-	// if !strings.HasPrefix(path, "/") {
-	// 	path = "/" + path
-	// }
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
 
 	serverAddress := ctx.Value("app_host").(string)
 	path = serverAddress + path
@@ -85,8 +59,6 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 	if len(req.QueryString) > 0 {
 		path += "?" + req.QueryString
 	}
-
-	fmt.Println(fmt.Sprintf("path 2 '%s'", path))
 
 	httpRequest, err := http.NewRequest(
 		strings.ToUpper(req.Method),
@@ -121,16 +93,6 @@ func (r *RequestAccessor) EventToRequest(ctx context.Context, req core.DigitalOc
 	httpRequest.RequestURI = httpRequest.URL.RequestURI()
 
 	return httpRequest, nil
-}
-
-// GetStageVarsFromContextV2 retrieve stage variables from context
-func GetStageVarsFromContextV2(ctx context.Context) (map[string]string, bool) {
-	v, ok := ctx.Value(ctxKey{}).(requestContextV2)
-	return v.stageVars, ok
-}
-
-type requestContextV2 struct {
-	stageVars map[string]string
 }
 
 // splitSingletonHeaders splits the headers into single-value headers and other,

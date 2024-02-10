@@ -2,7 +2,7 @@ package main
 
 import (
 	"aiconec/commerce-adapter/core"
-	"aiconec/commerce-adapter/pkg/proxy"
+	fiberadapter "aiconec/commerce-adapter/pkg/adapter/fiber"
 	"context"
 	"fmt"
 	"strings"
@@ -11,57 +11,50 @@ import (
 )
 
 const (
-	BASE_URL = "https://altalune.id/commerce"
+	FUNCTION_NAMESPACE = "commerce"
+	FUNCTION_PACKAGE   = "mokapos"
+	FUNCTION_NAME      = "client_abc"
+	BASE_URL           = "https://altalune.id/" + FUNCTION_NAMESPACE
 )
 
 var app *fiber.App
-var fiberDoFunc *proxy.FiberProxy
+var adapter Adapter
 
-func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
-	fmt.Println(fmt.Sprintf("params: %+v\n", event))
+type Adapter interface {
+	ProxyWithContext(ctx context.Context, params core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error)
+}
+
+func DoCtx(ctx context.Context) context.Context {
 	functionName := ctx.Value("function_name").(string)
 	namespace := ctx.Value("namespace").(string)
 
 	extractedPath := strings.TrimPrefix(functionName, "/"+namespace)
-	ctx = context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
 
-	fmt.Println("ctx:", functionName, namespace, BASE_URL+extractedPath)
-	fmt.Println(fmt.Sprintf("path 0 '%s'", event.HTTP.Path))
+	return context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
+}
 
-	app = fiber.New()
+func fiberApp() *fiber.App {
+	app := fiber.New()
+	router := app.Group(fmt.Sprintf("/%s/%s/%s", FUNCTION_NAME, FUNCTION_PACKAGE, FUNCTION_NAME))
 
-	app.Get("/commerce/mokapos/client_abc", func(c *fiber.Ctx) error {
+	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Fiber!")
 	})
-	app.Get("/commerce/mokapos/client_abc/uhuy", func(c *fiber.Ctx) error {
+
+	router.Get("/uhuy", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World Huy!")
 	})
 
-	fiberDoFunc = proxy.New(app)
+	return app
+}
 
-	return fiberDoFunc.ProxyWithContext(ctx, event)
+func fiberAdapter(app *fiber.App) Adapter {
+	return fiberadapter.New(app)
+}
 
-	// fmt.Println(fmt.Sprintf("params: %+v\n", event))
-	// jsonString, err := json.Marshal(event)
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// }
-	// fmt.Println("JSON String:", string(jsonString))
+func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
+	app = fiberApp()
+	adapter = fiberAdapter(app)
 
-	// host := ctx.Value("api_host").(string)
-	// functionName := ctx.Value("function_name").(string)
-	// namespace := ctx.Value("namespace").(string)
-
-	// extractedPath := strings.TrimPrefix(functionName, "/"+namespace)
-	// ctx = context.WithValue(ctx, "app_host", BASE_URL+extractedPath)
-
-	// appHost := ctx.Value("app_host").(string)
-	// namespace2 := ctx.Value("namespace").(string)
-
-	// fmt.Println("ctx:", host, functionName, appHost, namespace2)
-	// fmt.Println("cookie:", event.Headers["cookie"])
-
-	// return &DigitalOceanHTTPResponse{
-	// 	Body: fmt.Sprintf("Hello %s!", "stranger"),
-	// }, nil
+	return adapter.ProxyWithContext(DoCtx(ctx), event)
 }
