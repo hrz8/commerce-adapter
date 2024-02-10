@@ -47,8 +47,9 @@ func Main(ctx context.Context, event DigitalOceanParameters) (*DigitalOceanHTTPR
 	ctx = context.WithValue(ctx, "app_host", extractedPath)
 
 	appHost := ctx.Value("app_host").(string)
+	namespace2 := ctx.Value("namespace").(string)
 
-	fmt.Println("ctx:", host, functionName, namespace, appHost)
+	fmt.Println("ctx:", host, functionName, appHost, namespace2)
 	fmt.Println("cookie:", event.Headers["cookie"])
 
 	return &DigitalOceanHTTPResponse{
