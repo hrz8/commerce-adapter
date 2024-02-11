@@ -6,6 +6,9 @@ packages:
       - name: client_abc
         runtime: 'go:1.20'
         web: 'raw'
+        environment:
+          BASE_URL: ${BASE_URL}
+          FUNCTION_NAME: ${FUNCTION_NAME}
       - name: client_def
         runtime: 'nodejs:18'
         web: 'raw'

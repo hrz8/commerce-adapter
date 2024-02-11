@@ -3,9 +3,11 @@ module aiconec/commerce-adapter
 go 1.20
 
 require (
+	github.com/emirpasic/gods v1.18.1
 	github.com/gofiber/fiber/v2 v2.52.0
 	github.com/hrz8/do-function-go-proxy v0.1.1
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/sethvargo/go-envconfig v1.0.0
 )
 
 require (
