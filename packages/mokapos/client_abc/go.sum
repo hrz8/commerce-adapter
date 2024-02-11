@@ -5,8 +5,8 @@ github.com/gofiber/fiber/v2 v2.52.0 h1:S+qXi7y+/Pgvqq4DrSmREGiFwtB7Bu6+QFLuIHYw/
 github.com/gofiber/fiber/v2 v2.52.0/go.mod h1:KEOE+cXMhXG0zHc9d8+E38hoX+ZN7bhOtgeF2oT6jrQ=
 github.com/google/uuid v1.5.0 h1:1p67kYwdtXjb0gL0BPiP1Av9wiZPo5A8z2cWkTZ+eyU=
 github.com/google/uuid v1.5.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/hrz8/do-function-go-proxy v0.1.0 h1:Rk62JwexIKJzFsjWqRqPx1T/XP8eaOz9vwExFJSmnD8=
-github.com/hrz8/do-function-go-proxy v0.1.0/go.mod h1:Izhc2pXSboxPJZjfzAILLpunhMM6qodxT7o2nw6L4PY=
+github.com/hrz8/do-function-go-proxy v0.1.1 h1:OvV/AyVf25I624HrMIFgkG/MJzPsswAKLJGVM6Gwczo=
+github.com/hrz8/do-function-go-proxy v0.1.1/go.mod h1:Izhc2pXSboxPJZjfzAILLpunhMM6qodxT7o2nw6L4PY=
 github.com/klauspost/compress v1.17.0 h1:Rnbp4K9EjcDuVuHtd0dgA4qNuv9yKDYKK1ulpJwgrqM=
 github.com/klauspost/compress v1.17.0/go.mod h1:ntbaceVETuRiXiv4DpjP66DpAtAGkEQskQzEyD//IeE=
 github.com/labstack/echo/v4 v4.11.4 h1:vDZmA+qNeh1pd/cCkEicDMrjtrnMGQ1QFI9gWN1zGq8=
