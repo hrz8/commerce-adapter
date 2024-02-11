@@ -9,10 +9,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const (
-	FUNCTION_NAMESPACE = "commerce"
-)
-
 type AppRegistry struct {
 	cfg         port.ServiceConfig
 	echoApp     *echo.Echo
@@ -36,7 +32,7 @@ func (r *AppRegistry) Load(ctx context.Context) {
 	r.usecases = r.loadUsecases()
 	r.controllers = r.loadControllers()
 
-	basePath := r.echoApp.Group(fmt.Sprintf("/%s%s", FUNCTION_NAMESPACE, path))
+	basePath := r.echoApp.Group(fmt.Sprintf("/%s%s", r.cfg.GetFunctionName(), path))
 
 	for _, key := range r.controllers.Keys() {
 		_ctrl, exist := r.controllers.Get(key)

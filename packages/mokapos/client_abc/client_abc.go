@@ -11,17 +11,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const (
-	FUNCTION_NAMESPACE = "commerce"
-	BASE_URL           = "https://altalune.id/" + FUNCTION_NAMESPACE
-)
-
 var echoApp *echo.Echo
 
 func Main(ctx context.Context, event core.DigitalOceanParameters) (*core.DigitalOceanHTTPResponse, error) {
-	pCtx := proxy.NewContext(ctx, BASE_URL).Background()
-
 	appConfig := config.New()
+
+	pCtx := proxy.NewContext(ctx, appConfig.GetBaseURL()).Background()
+
 	echoApp = echo.New()
 
 	app := App.New(appConfig, echoApp)
